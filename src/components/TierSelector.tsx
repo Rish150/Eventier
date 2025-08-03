@@ -4,21 +4,22 @@ import { useUser } from '@clerk/nextjs'
 import { useEffect, useState } from 'react'
 
 const tiers = ['free', 'silver', 'gold', 'platinum'] as const
+type Tier = typeof tiers[number]
 
 export default function TierSelector() {
   const { user, isLoaded } = useUser()
-  const [currentTier, setCurrentTier] = useState<string>('free')
+  const [currentTier, setCurrentTier] = useState<Tier>('free')
 
   useEffect(() => {
     if (isLoaded && user) {
       const tier = user.publicMetadata?.tier as string | undefined
-      if (tier && tiers.includes(tier as any)) {
-        setCurrentTier(tier)
+      if (tier && (tiers as readonly string[]).includes(tier)) {
+        setCurrentTier(tier as Tier)
       }
     }
   }, [isLoaded, user])
 
-  const simulateTierUpgrade = (newTier: string) => {
+  const simulateTierUpgrade = (newTier: Tier) => {
     setCurrentTier(newTier)
     alert(`Tier temporarily upgraded to ${newTier.toUpperCase()}`)
   }
